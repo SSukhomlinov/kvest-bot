@@ -21,6 +21,7 @@ const STAGES = {
 
 const CODE_FORMAT = /^#\d{10}$/;
 const CODE_FORMAT_ERROR = "Введіть код у форматі #xxxxxxxxxx - 10 чисел";
+const WRONG_CODE_ERROR = "Не правильний код, вибач";
 
 const WELCOME = [
   "Привіт. Я квест бот, і радо допоможу тобі знайти наступну підказку.",
@@ -56,7 +57,7 @@ bot.on("message", (msg) => {
   }
 
   const hint = STAGES[normalized];
-  bot.sendMessage(msg.chat.id, hint || CODE_FORMAT_ERROR);
+  bot.sendMessage(msg.chat.id, hint || WRONG_CODE_ERROR);
 });
 
 const app = express();
