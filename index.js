@@ -34,19 +34,28 @@ const WELCOME = [
 
 const bot = new TelegramBot(TOKEN);
 
-bot.onText(/^\/start$/, (msg) => {
-  bot.sendMessage(msg.chat.id, WELCOME);
-});
+bot.on("message", (msg) => {
+  const text = (msg.text || "").trim();
 
-bot.onText(/^\/code:?\s*(.+)$/i, (msg, match) => {
-  const input = match[1].trim();
+  if (text === "/start") {
+    bot.sendMessage(msg.chat.id, WELCOME);
+    return;
+  }
 
-  if (!CODE_FORMAT.test(input)) {
+  // accept "/code: #123...", "/code #123...", or just "#123..." on its own
+  const codeMatch = text.match(/#\s*\d+/);
+  if (!codeMatch) {
     bot.sendMessage(msg.chat.id, CODE_FORMAT_ERROR);
     return;
   }
 
-  const hint = STAGES[input];
+  const normalized = "#" + codeMatch[0].replace(/\D/g, "");
+  if (!CODE_FORMAT.test(normalized)) {
+    bot.sendMessage(msg.chat.id, CODE_FORMAT_ERROR);
+    return;
+  }
+
+  const hint = STAGES[normalized];
   bot.sendMessage(msg.chat.id, hint || CODE_FORMAT_ERROR);
 });
 
